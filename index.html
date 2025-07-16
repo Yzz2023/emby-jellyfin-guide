@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emby & Jellyfin 客户端选择指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        // 为了避免页面加载时出现主题闪烁 (FOUC), 将此脚本放在 <head> 中。
+        // 它会根据 localStorage 或操作系统的偏好，在页面渲染前就为 <html> 标签添加 'dark' 类。
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        /* 自定义基础样式和字体 */
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 为颜色变化添加平滑过渡效果 */
+        body, .card, .nav-link, .header, .footer, .section-title {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* 平台和推荐标签的样式 */
+        .status-badge {
+            display: inline-block;
+            padding: 0.2em 0.65em;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        /* 亮色模式颜色 */
+        .status-emby { color: #166534; background-color: #f0fdf4; border-color: #bbf7d0; }
+        .status-jellyfin { color: #5b21b6; background-color: #f5f3ff; border-color: #ddd6fe; }
+        .status-multi { color: #1e40af; background-color: #eff6ff; border-color: #bfdbfe; }
+        
+        /* 暗色模式颜色 */
+        .dark .status-emby { color: #a7f3d0; background-color: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.2); }
+        .dark .status-jellyfin { color: #c4b5fd; background-color: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); }
+        .dark .status-multi { color: #93c5fd; background-color: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.2); }
+        
+        /* 滚动定位偏移，避免被粘性导航栏遮挡 */
+        section[id] {
+            scroll-margin-top: 100px;
+        }
+
+        /* 全新主题切换按钮样式 */
+        #theme-toggle-button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px; /* 宽度 */
+            height: 28px; /* 高度 */
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .dark #theme-toggle-button {
+            background-color: #4a5568; /* 暗色模式下的背景 */
+        }
+        html:not(.dark) #theme-toggle-button {
+            background-color: #FBBF24; /* 亮色模式下的背景 (黄色) */
+        }
+
+        #theme-toggle-button .icon-wrapper {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .dark #theme-toggle-button .icon-wrapper {
+            transform: translateX(28px);
+        }
+
+        #theme-toggle-button svg {
+            width: 16px;
+            height: 16px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        /* 太阳图标 */
+        #theme-toggle-light-icon {
+            color: #F59E0B;
+            opacity: 0;
+            transform: scale(0);
+        }
+        html:not(.dark) #theme-toggle-light-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 月亮图标 */
+        #theme-toggle-dark-icon {
+            color: #4F4F4F;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .dark #theme-toggle-dark-icon {
+            opacity: 0;
+            transform: scale(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-slate-800 dark:text-slate-200">
+    
+    <!-- 容器 -->
+    <div class="container mx-auto max-w-7xl px-4 py-8 sm:py-16">
+
+        <!-- 顶部：标题、主题切换 -->
+        <div class="flex justify-between items-center mb-12 header">
+            <div class="text-left">
+                <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Emby & Jellyfin 客户端选择指南</h1>
+            </div>
+            <!-- 新的主题切换按钮 -->
+            <div id="theme-toggle-button">
+                <div class="icon-wrapper">
+                    <svg id="theme-toggle-dark-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11h-2a1 1 0 110-2h2a1 1 0 110 2zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM17 13a1 1 0 010 2h-2a1 1 0 110-2h2zM3 11a1 1 0 011-1h2a1 1 0 110 2H4a1 1 0 01-1-1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- 粘性导航栏 -->
+        <nav class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg p-3 rounded-full shadow-lg mb-16 sticky top-4 z-40 flex items-center">
+            <div class="pl-3 pr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+            </div>
+            <div class="flex flex-wrap justify-center gap-x-2 gap-y-2">
+                <a href="#ios" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">iOS</a>
+                <a href="#macos" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">macOS</a>
+                <a href="#windows" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">Windows</a>
+                <a href="#android" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">Android</a>
+                <a href="#tvos" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">tvOS</a>
+                <a href="#android-tv" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">Android TV</a>
+                <a href="#linux" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">Linux</a>
+                <a href="#plugins" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">插件与集成</a>
+            </div>
+        </nav>
+
+        <!-- 主内容区域 -->
+        <main class="space-y-16">
+            <section id="basics">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 flex items-center gap-3 section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    基础概念与核心定位
+                </h3>
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg space-y-6 card">
+                    <p>本知识库的核心目标用户是<b>Emby或Jellyfin服务的普通使用者</b>，而非服务器的搭建和管理者。</p>
+                </div>
+            </section>
+
+            <section id="logic">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 flex items-center gap-3 section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 12h.01M15 12h.01M12 16h.01M15 16h.01" /></svg>
+                    客户端选择的核心逻辑
+                </h3>
+                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg space-y-4 card">
+                    <p>在选择具体的客户端前，可从以下几种技术架构和功能定位进行考量，以明确自身需求：</p>
+                    <ol class="list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-400">
+                        <li><b>官方标准型:</b> 由官方开发，功能与服务器同步最紧密，提供基准体验。</li>
+                        <li><b>集成高级解码型:</b> 客户端内置强大的独立解码引擎，能最大程度地直接播放高规格视频。 (代表: <code>Infuse</code>, <code>VidHub</code>)</li>
+                        <li><b>多源聚合与扩展型:</b> 客户端的核心架构支持同时连接多个媒体服务器或网盘。 (代表: <code>VidHub</code>, <code>Hills</code>)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section id="ios">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">iOS</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="macos">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">macOS</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="windows">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Windows</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="android">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Android</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="tvos">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">tvOS</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="android-tv">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Android TV</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="linux">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Linux</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+            <section id="plugins">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">插件与集成 (Plugins & Integrations)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="text-center mt-20 pt-8 border-t border-slate-200 dark:border-slate-700/50 footer">
+        </footer>
+    </div>
+
+    <script>
+        // 客户端数据 (已补全所有软件)
+        const clients = [
+            { name: 'Infuse', platform: ['ios', 'macos', 'tvos'], desc: '<b>画质标杆</b>。集成顶级解码引擎，支持杜比视界。', server: 'multi', price: '订阅制: ¥88/年', link: 'https://firecore.com/infuse', linkText: '官方网站' },
+            { name: 'VidHub', platform: ['ios', 'macos', 'android', 'android-tv'], desc: '<b>聚合神器</b>。整合多服务器与网盘，处理速度快。', server: 'multi', price: '¥89 (iOS) / 安卓免费', link: 'https://zh.okaapps.com/product/1659622164#', linkText: '官方网站' },
+            { name: 'Fileball', platform: ['ios', 'macos', 'tvos'], desc: '<b>文件管理核心</b>。免费版功能已足够日常使用。', server: 'multi', price: '¥68', link: 'https://fileball.app', linkText: '官方网站' },
+            { name: 'SenPlayer', platform: ['ios', 'macos', 'tvos'], desc: '<b>纯播放器</b>。性能稳定，Bug少，更新频繁。', server: 'multi', price: '套装 ¥88 / 单平台 ¥48', link: 'https://apps.apple.com/cn/app/senplayer-%E6%99%BA%E8%83%BD%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8-8%E5%80%8D%E9%80%9F/id6443975850', linkText: 'App Store' },
+            { name: 'EplayerX', platform: ['ios', 'macos'], desc: '集成MPV播放核心，解码能力强。', server: 'multi', price: '目前在Beta', link: 'https://testflight.apple.com/join/E8Uyfh6y', linkText: 'TestFlight' },
+            { name: 'Hills', platform: ['android', 'windows'], desc: '<b>多服聚合搜索</b>。弥补Windows平台短板。', server: 'multi', price: 'Pro版: 约¥50', link: 'https://play.google.com/store/apps/details?id=com.mountains.hills&hl=en-US&pli=1', linkText: 'Google Play' },
+            { name: 'Femor', platform: ['ios', 'macos', 'windows', 'android'], desc: 'HKA腐竹开发，支持WebDAV。', server: 'multi', price: '免费 (iOS需签名)', link: 'https://web.telegram.org/a/#-1002158582195', linkText: 'Telegram' },
+            { name: 'iemc', platform: ['ios'], desc: '老牌Emby/Jellyfin播放器。', server: 'multi', price: '¥18', link: 'https://apps.apple.com/hk/app/iemc/id1467462861', linkText: 'App Store' },
+            { name: 'yybx', platform: ['ios'], desc: 'iemc同开发者，功能更丰富。', server: 'multi', price: '¥88', link: 'https://apps.apple.com/us/app/yybx/id1519723194', linkText: 'App Store' },
+            { name: 'HamHub', platform: ['ios', 'macos'], desc: '中规中矩，原生Mac版需订阅且不完善。', server: 'multi', price: '¥68 (iOS) / Mac需订阅', link: 'https://www.hamhub.app/', linkText: '官方网站' },
+            { name: 'Forward', platform: ['ios', 'tvos'], desc: 'UI精美，支持聚合搜索，但Bug较多，开发缓慢。', server: 'multi', price: '¥298', link: 'https://apps.apple.com/cn/app/forward-%E6%96%B0%E8%A7%86%E7%95%8C/id6503940939', linkText: 'App Store' },
+            { name: 'Conflux', platform: ['ios'], desc: '中规中矩，功能尚可，但价格偏贵。', server: 'multi', price: '¥108', link: 'https://apps.apple.com/cn/app/conflux-video-player/id6450330892', linkText: 'App Store' },
+            { name: 'Reflix', platform: ['ios'], desc: '需跳转第三方播放器，内置Trakt功能。', server: 'multi', price: '¥109', link: 'https://apps.apple.com/cn/app/reflix-%E6%99%BA%E8%83%BD%E8%81%9A%E5%90%88%E5%AE%A2%E6%88%B7%E7%AB%AF/id6621243955', linkText: 'App Store' },
+            { name: 'BoxPlayer', platform: ['ios'], desc: '中规中矩，核心特点是支持Trakt数据同步。', server: 'multi', price: '¥48', link: 'https://xbyvideohub.com/', linkText: '官方网站' },
+            { name: 'AGC', platform: ['ios'], desc: '架构特殊，通过外部小组件实现功能。', server: 'multi', price: '¥128', link: 'https://agcplayer.com/', linkText: '官方网站' },
+            { name: 'DS Cloud', platform: ['ios'], desc: '第三方群晖NAS App，集成了Emby播放功能。', server: 'emby', price: '¥68', link: 'https://apps.apple.com/cn/app/ds-cloud-%E9%AB%98%E6%B8%85%E5%BD%B1%E7%89%87-%E6%97%A0%E6%8D%9F%E9%9F%B3%E4%B9%90%E8%BD%BB%E6%9D%BE%E6%92%AD%E6%94%BE/id6476057278', linkText: 'App Store' },
+            { name: '网易爆米花', platform: ['ios', 'macos', 'windows', 'android', 'tvos', 'android-tv'], desc: '大厂出品，功能完善。<br><span class="text-xs text-red-500">注意:包含数据收集，已被多数服务器屏蔽。</span>', server: 'emby', price: '目前免费', link: 'https://bmh.163.com/', linkText: '官方网站' },
+            { name: 'Lenna', platform: ['ios'], desc: '新兴客户端，只支持Emby，处于早期开发阶段。', server: 'emby', price: '目前免费 (TestFlight)', link: 'https://apps.apple.com/us/app/lenna-video-library-player/id6502967807?l=zh-Hans-CN', linkText: 'App Store' },
+            { name: 'Swiftfin', platform: ['ios', 'macos', 'tvos'], desc: '<b>Jellyfin官方原生客户端</b>。为苹果生态系统打造的现代播放器。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/jellyfin/Swiftfin', linkText: 'GitHub' },
+            { name: 'Findroid', platform: ['android'], desc: '<b>安卓社区首选</b>。广受欢迎的第三方客户端，UI/UX流畅。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/jarnedemeulemeester/findroid', linkText: 'GitHub' },
+            { name: 'Jellyfin Media Player', platform: ['macos', 'windows', 'linux'], desc: '<b>官方桌面播放器</b>。基于MPV核心，解码能力强大。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/downloads/clients/', linkText: '官方网站' },
+            { name: 'Jellyfin for Android TV', platform: ['android-tv'], desc: '<b>官方电视客户端</b>。为大屏和遥控器操作优化。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/downloads/clients/', linkText: '官方网站' },
+            { name: 'Jellyfin for Kodi', platform: ['plugins'], desc: '<b>Kodi集成插件</b>。将Jellyfin无缝整合进Kodi媒体中心。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/docs/general/clients/kodi', linkText: '官方文档' },
+            { name: 'Yamby', platform: ['android'], desc: '<b>安卓性价比之王</b>。大部分功能已永久免费。', server: 'emby', price: '免费', link: 'https://t.me/yamby_release', linkText: 'Telegram' },
+            { name: 'Emby小秘版', platform: ['android', 'windows'], desc: '社区维护，解锁官方播放限制。', server: 'emby', price: '免费', link: 'https://t.me/lilyemby/38', linkText: 'Telegram' },
+            { name: 'tsukimi', platform: ['linux'], desc: '开源的Emby客户端，专为Linux打造。', server: 'emby', price: '免费 (开源)', link: 'https://github.com/tsukinaha/tsukimi', linkText: 'GitHub' },
+            { name: 'AfuseKt', platform: ['android', 'android-tv'], desc: '<b>安卓网盘刮削</b>。支持Trakt，适配TV。', server: 'multi', price: '¥99 (手机+TV版)', link: 'https://github.com/AttemptD/AfuseKt-release', linkText: 'GitHub' },
+            { name: '小幻影视', platform: ['windows'], desc: '新兴客户端，由前“哔哩”开发者打造。', server: 'multi', price: '内测中', link: 'https://apps.microsoft.com/detail/9nb0h051m4v4?hl=zh-CN&gl=CN', linkText: 'Microsoft Store' },
+            { name: 'Terminus Player', platform: ['windows', 'macos'], desc: '终点站开发，多年未更新但仍可使用。', server: 'multi', price: '未知', link: 'https://github.com/Terminus-Media/Terminus-Player', linkText: 'GitHub' },
+        ];
+
+        // 动态创建客户端卡片 (简化版)
+        function createClientCard(client) {
+            const serverBadge = {
+                emby: '<span class="status-badge status-emby">Emby Only</span>',
+                jellyfin: '<span class="status-badge status-jellyfin">Jellyfin Only</span>',
+                multi: '<span class="status-badge status-multi">Emby & Jellyfin</span>'
+            };
+
+            return `
+                <article class="card bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden flex flex-col ring-1 ring-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                    <div class="p-6 flex-grow">
+                        <h4 class="text-xl font-bold text-slate-900 dark:text-white pr-2 mb-2">${client.name}</h4>
+                        <div class="mb-4">${serverBadge[client.server]}</div>
+                        <p class="text-slate-600 dark:text-slate-400 mt-2 text-sm">${client.desc}</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 flex justify-between items-center text-sm border-t border-slate-100 dark:border-slate-700/50">
+                        <span class="font-bold text-green-700 dark:text-green-400">${client.price}</span>
+                        <a href="${client.link}" target="_blank" class="px-3 py-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-md font-medium transition-colors duration-200">${client.linkText} &rarr;</a>
+                    </div>
+                </article>
+            `;
+        }
+        
+        // 页面加载完成后执行的脚本
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. 渲染页面内容 ---
+            const platforms = ['ios', 'macos', 'windows', 'android', 'tvos', 'android-tv', 'linux', 'plugins'];
+            platforms.forEach(platformId => {
+                const container = document.querySelector(`#${platformId} .grid`);
+                if (container) {
+                    const platformClients = clients.filter(c => c.platform.includes(platformId));
+                    container.innerHTML = platformClients.map(createClientCard).join('');
+                }
+            });
+
+            // --- 2. 主题切换功能 ---
+            const themeToggleButton = document.getElementById('theme-toggle-button');
+            const rootElement = document.documentElement;
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    rootElement.classList.add('dark');
+                } else {
+                    rootElement.classList.remove('dark');
+                }
+                localStorage.setItem('color-theme', theme);
+            };
+
+            // 页面加载时，已经通过 <head> 中的脚本设置了初始主题
+            // 这里只需为按钮添加事件
+            themeToggleButton.addEventListener('click', () => {
+                const isDarkMode = rootElement.classList.contains('dark');
+                applyTheme(isDarkMode ? 'light' : 'dark');
+            });
+        });
+    </script>
+</body>
+</html>
