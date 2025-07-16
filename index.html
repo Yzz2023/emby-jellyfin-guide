@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script>
         // 为了避免页面加载时出现主题闪烁 (FOUC), 将此脚本放在 <head> 中。
-        // 它会根据 localStorage 或操作系统的偏好，在页面渲染前就为 <html> 标签添加 'dark' 类。
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -18,116 +17,104 @@
         }
     </script>
     <style>
-        /* 自定义基础样式和字体 */
+        /* 1. 定义 CSS 颜色变量 */
+        :root {
+            --color-bg-primary: #f9fafb; /* 主背景 */
+            --color-bg-secondary: #ffffff; /* 卡片、导航栏背景 */
+            --color-bg-card-footer: #f8fafc; /* 卡片页脚背景 */
+            --color-bg-nav-blur: rgba(255, 255, 255, 0.8);
+            --color-bg-nav-active: #dbeafe; /* 导航激活背景 */
+            --color-text-nav-active: #2563eb; /* 导航激活文字 */
+
+            --color-text-title: #111827; /* 大标题文字 */
+            --color-text-primary: #374151; /* 主要文字 */
+            --color-text-secondary: #6b7280; /* 次要文字 */
+            --color-text-link: #2563eb; /* 链接文字 */
+            --color-text-price: #15803d; /* 价格文字 */
+            --color-text-accent: #3b82f6; /* 强调色图标 */
+
+            --color-border-primary: #e5e7eb; /* 边框 */
+            --color-border-accent: #3b82f6; /* 强调色边框 */
+
+            /* 徽章颜色变量 */
+            --color-badge-emby-text: #166534; --color-badge-emby-bg: #f0fdf4; --color-badge-emby-border: #bbf7d0;
+            --color-badge-jellyfin-text: #5b21b6; --color-badge-jellyfin-bg: #f5f3ff; --color-badge-jellyfin-border: #ddd6fe;
+            --color-badge-multi-text: #1e40af; --color-badge-multi-bg: #eff6ff; --color-badge-multi-border: #bfdbfe;
+        }
+
+        html.dark {
+            --color-bg-primary: #111827;
+            --color-bg-secondary: #1f2937;
+            --color-bg-card-footer: rgba(31, 41, 55, 0.5);
+            --color-bg-nav-blur: rgba(31, 41, 55, 0.8);
+            --color-bg-nav-active: #1e40af;
+            --color-text-nav-active: #ffffff;
+
+            --color-text-title: #ffffff;
+            --color-text-primary: #d1d5db;
+            --color-text-secondary: #9ca3af;
+            --color-text-link: #60a5fa;
+            --color-text-price: #4ade80;
+            --color-text-accent: #60a5fa;
+
+            --color-border-primary: #374151;
+            --color-border-accent: #60a5fa;
+
+            --color-badge-emby-text: #a7f3d0; --color-badge-emby-bg: rgba(74, 222, 128, 0.1); --color-badge-emby-border: rgba(74, 222, 128, 0.2);
+            --color-badge-jellyfin-text: #c4b5fd; --color-badge-jellyfin-bg: rgba(139, 92, 246, 0.1); --color-badge-jellyfin-border: rgba(139, 92, 246, 0.2);
+            --color-badge-multi-text: #93c5fd; --color-badge-multi-bg: rgba(59, 130, 246, 0.1); --color-badge-multi-border: rgba(59, 130, 246, 0.2);
+        }
+
+        /* 2. 应用 CSS 变量 */
         body {
             font-family: 'Inter', 'Noto Sans SC', sans-serif;
             scroll-behavior: smooth;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* 为颜色变化添加平滑过渡效果 */
-        body, .card, .nav-link, .header, .footer, .section-title {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
+        .section-title, .header h1 { color: var(--color-text-title); }
+        .card, .intro-card { background-color: var(--color-bg-secondary); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .card-footer { background-color: var(--color-bg-card-footer); border-top: 1px solid var(--color-border-primary); }
+        .nav-bar { background-color: var(--color-bg-nav-blur); }
+        .text-secondary { color: var(--color-text-secondary); }
+        .link { color: var(--color-text-link); }
+        .price { color: var(--color-text-price); }
+        .accent-border { border-color: var(--color-border-accent); }
+        .accent-text { color: var(--color-text-accent); }
+        .footer-border { border-top-color: var(--color-border-primary); }
+
+        .status-badge { display: inline-block; padding: 0.2em 0.65em; font-size: 0.75rem; font-weight: 500; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 9999px; border: 1px solid; transition: all 0.3s ease; }
+        .status-emby { color: var(--color-badge-emby-text); background-color: var(--color-badge-emby-bg); border-color: var(--color-badge-emby-border); }
+        .status-jellyfin { color: var(--color-badge-jellyfin-text); background-color: var(--color-badge-jellyfin-bg); border-color: var(--color-badge-jellyfin-border); }
+        .status-multi { color: var(--color-badge-multi-text); background-color: var(--color-badge-multi-bg); border-color: var(--color-badge-multi-border); }
         
-        /* 平台和推荐标签的样式 */
-        .status-badge {
-            display: inline-block;
-            padding: 0.2em 0.65em;
-            font-size: 0.75rem;
-            font-weight: 500;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 9999px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-        /* 亮色模式颜色 */
-        .status-emby { color: #166534; background-color: #f0fdf4; border-color: #bbf7d0; }
-        .status-jellyfin { color: #5b21b6; background-color: #f5f3ff; border-color: #ddd6fe; }
-        .status-multi { color: #1e40af; background-color: #eff6ff; border-color: #bfdbfe; }
-        
-        /* 暗色模式颜色 */
-        .dark .status-emby { color: #a7f3d0; background-color: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.2); }
-        .dark .status-jellyfin { color: #c4b5fd; background-color: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); }
-        .dark .status-multi { color: #93c5fd; background-color: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.2); }
-        
-        /* 滚动定位偏移，避免被粘性导航栏遮挡 */
-        section[id] {
-            scroll-margin-top: 100px;
+        /* 导航激活状态样式 */
+        .nav-link-active {
+            background-color: var(--color-bg-nav-active) !important;
+            color: var(--color-text-nav-active) !important;
         }
 
-        /* 全新主题切换按钮样式 */
-        #theme-toggle-button {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 56px; /* 宽度 */
-            height: 28px; /* 高度 */
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .dark #theme-toggle-button {
-            background-color: #4a5568; /* 暗色模式下的背景 */
-        }
-        html:not(.dark) #theme-toggle-button {
-            background-color: #FBBF24; /* 亮色模式下的背景 (黄色) */
-        }
+        section[id] { scroll-margin-top: 100px; }
 
-        #theme-toggle-button .icon-wrapper {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
+        #theme-toggle-button { position: relative; display: flex; align-items: center; justify-content: center; width: 56px; height: 28px; border-radius: 9999px; cursor: pointer; transition: background-color 0.3s ease; }
+        .dark #theme-toggle-button { background-color: #4a5568; }
+        html:not(.dark) #theme-toggle-button { background-color: #FBBF24; }
 
-        .dark #theme-toggle-button .icon-wrapper {
-            transform: translateX(28px);
-        }
+        #theme-toggle-button .icon-wrapper { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background-color: white; display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+        .dark #theme-toggle-button .icon-wrapper { transform: translateX(28px); }
 
-        #theme-toggle-button svg {
-            width: 16px;
-            height: 16px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        
-        /* 太阳图标 */
-        #theme-toggle-light-icon {
-            color: #F59E0B;
-            opacity: 0;
-            transform: scale(0);
-        }
-        html:not(.dark) #theme-toggle-light-icon {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* 月亮图标 */
-        #theme-toggle-dark-icon {
-            color: #4F4F4F;
-            opacity: 1;
-            transform: scale(1);
-        }
-        .dark #theme-toggle-dark-icon {
-            opacity: 0;
-            transform: scale(0);
-        }
+        #theme-toggle-button svg { width: 16px; height: 16px; transition: opacity 0.3s ease, transform 0.3s ease; }
+        #theme-toggle-light-icon { color: #F59E0B; opacity: 0; transform: scale(0); }
+        html:not(.dark) #theme-toggle-light-icon { opacity: 1; transform: scale(1); }
+        #theme-toggle-dark-icon { color: #4F4F4F; opacity: 1; transform: scale(1); }
+        .dark #theme-toggle-dark-icon { opacity: 0; transform: scale(0); }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-slate-800 dark:text-slate-200">
+<body>
     
     <!-- 容器 -->
     <div class="container mx-auto max-w-7xl px-4 py-8 sm:py-16">
@@ -135,25 +122,25 @@
         <!-- 顶部：标题、主题切换 -->
         <div class="flex justify-between items-center mb-12 header">
             <div class="text-left">
-                <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">Emby & Jellyfin 客户端选择指南</h1>
+                <h1 class="text-4xl sm:text-5xl font-bold tracking-tight">Emby & Jellyfin 客户端选择指南</h1>
             </div>
-            <!-- 新的主题切换按钮 -->
-            <div id="theme-toggle-button">
+            <!-- 主题切换按钮 -->
+            <button id="theme-toggle-button" aria-label="Toggle theme">
                 <div class="icon-wrapper">
                     <svg id="theme-toggle-dark-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11h-2a1 1 0 110-2h2a1 1 0 110 2zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM17 13a1 1 0 010 2h-2a1 1 0 110-2h2zM3 11a1 1 0 011-1h2a1 1 0 110 2H4a1 1 0 01-1-1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                 </div>
-            </div>
+            </button>
         </div>
 
         <!-- 粘性导航栏 -->
-        <nav class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg p-3 rounded-full shadow-lg mb-16 sticky top-4 z-40 flex items-center">
+        <nav class="nav-bar backdrop-blur-lg p-3 rounded-full shadow-lg mb-16 sticky top-4 z-40 flex items-center">
             <div class="pl-3 pr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
             </div>
-            <div class="flex flex-wrap justify-center gap-x-2 gap-y-2">
+            <div id="nav-links" class="flex flex-wrap justify-center gap-x-2 gap-y-2">
                 <a href="#ios" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">iOS</a>
                 <a href="#macos" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">macOS</a>
                 <a href="#windows" class="nav-link px-4 py-2 text-sm sm:text-base hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white rounded-full font-medium transition-colors duration-200">Windows</a>
@@ -168,23 +155,23 @@
         <!-- 主内容区域 -->
         <main class="space-y-16">
             <section id="basics">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 flex items-center gap-3 section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 flex items-center gap-3 section-title accent-border">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 accent-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     基础概念与核心定位
                 </h3>
-                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg space-y-6 card">
+                <div class="intro-card p-6 sm:p-8 rounded-2xl shadow-lg space-y-6">
                     <p>本知识库的核心目标用户是<b>Emby或Jellyfin服务的普通使用者</b>，而非服务器的搭建和管理者。</p>
                 </div>
             </section>
 
             <section id="logic">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 flex items-center gap-3 section-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 12h.01M15 12h.01M12 16h.01M15 16h.01" /></svg>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 flex items-center gap-3 section-title accent-border">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 accent-text" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 12h.01M15 12h.01M12 16h.01M15 16h.01" /></svg>
                     客户端选择的核心逻辑
                 </h3>
-                <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg space-y-4 card">
+                <div class="intro-card p-6 sm:p-8 rounded-2xl shadow-lg space-y-4">
                     <p>在选择具体的客户端前，可从以下几种技术架构和功能定位进行考量，以明确自身需求：</p>
-                    <ol class="list-decimal list-inside space-y-2 text-slate-600 dark:text-slate-400">
+                    <ol class="list-decimal list-inside space-y-2 text-secondary">
                         <li><b>官方标准型:</b> 由官方开发，功能与服务器同步最紧密，提供基准体验。</li>
                         <li><b>集成高级解码型:</b> 客户端内置强大的独立解码引擎，能最大程度地直接播放高规格视频。 (代表: <code>Infuse</code>, <code>VidHub</code>)</li>
                         <li><b>多源聚合与扩展型:</b> 客户端的核心架构支持同时连接多个媒体服务器或网盘。 (代表: <code>VidHub</code>, <code>Hills</code>)</li>
@@ -193,41 +180,65 @@
             </section>
 
             <section id="ios">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">iOS</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M791.01335 543.930916a230.959579 230.959579 0 0 1 110.957082-194.777922 241.211049 241.211049 0 0 0-187.54159-101.911669c-79.599646-7.839359-155.581127 47.036155-195.983978 47.036155s-102.514696-45.227072-168.847734-44.021017A249.653436 249.653436 0 0 0 137.934434 378.098319c-90.454143 156.787182-23.518077 388.952817 64.523956 516.191645 43.417989 60.302762 94.675337 132.063049 161.611403 129.650939s89.248088-42.211934 167.641679-42.211933 100.705613 42.211934 169.450762 41.005878 113.972221-63.920928 156.787182-126.032773a567.448993 567.448993 0 0 0 70.554232-145.329657 228.547469 228.547469 0 0 1-137.490298-207.441502zM662.568466 163.420486A225.532331 225.532331 0 0 0 715.634897 0a230.356552 230.356552 0 0 0-150.756906 77.790563 212.868751 212.868751 0 0 0-54.272486 157.993237 189.350674 189.350674 0 0 0 151.962961-72.363314z m0 0" fill="currentColor"></path></svg>
+                    iOS
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="macos">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">macOS</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M896 204.8a25.6 25.6 0 0 1 25.6 25.6v537.6h25.6a25.6 25.6 0 0 1 25.6 25.6v25.6a25.6 25.6 0 0 1-25.6-25.6H76.8a25.6 25.6 0 0 1-25.6-25.6v-25.6a25.6 25.6 0 0 1 25.6-25.6h25.6V230.4a25.6 25.6 0 0 1 25.6-25.6h768z m51.2 588.8H76.8v25.6h870.4v-25.6zM896 230.4H128v537.6h768V230.4z" fill="currentColor"></path><path d="M614.272 498.0224c0.512 54.2208 49.8688 72.2432 50.432 72.4992-0.4352 1.2544-7.8848 25.728-26.0352 50.9952-15.6672 21.8624-31.872 43.5712-57.4976 44.032-25.1904 0.4352-33.2544-14.2336-62.0288-14.2336s-37.7856 13.7728-61.5936 14.6688c-24.6784 0.9216-43.52-23.552-59.3152-45.312-32.3072-44.544-56.96-125.824-23.808-180.6848a92.7232 92.7232 0 0 1 77.7472-44.9536c24.2688-0.4096 47.1808 15.616 62.0032 15.616 14.848 0 42.7008-19.2512 71.9616-16.4352 12.2368 0.4864 46.6432 4.7104 68.736 35.5072-1.7664 1.1008-41.0624 22.8864-40.6016 68.3008zM511.232 390.144c-2.816-20.608 7.808-42.0352 19.968-55.5008 13.568-15.1552 36.4288-26.4192 55.3472-27.136 2.432 20.992-6.4512 42.0608-19.5584 57.2672-13.1328 15.104-34.6624 26.9312-55.7568 25.344z" fill="currentColor"></path></svg>
+                    macOS
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="windows">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Windows</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M523.818667 877.994667l433.962666 70.826666v-400.64H523.818667v329.813334z m0-730.794667v328.704h433.962666V75.093333L523.818667 147.2zM65.109333 475.818667h366.890667V159.104l-366.933333 60.885333v255.829334z m0 330.496l366.890667 59.776v-317.866667h-366.933333v258.090667z" fill="currentColor" opacity=".65"></path></svg>
+                    Windows
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="android">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Android</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                     <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M887.68 320.853333c-34.432 0-62.293333 28.330667-62.293333 63.317334v247.253333c0 34.901333 27.861333 63.317333 62.293333 63.317333 34.389333 0 62.293333-28.288 62.293333-63.317333V384.170667a62.72 62.72 0 0 0-62.293333-63.317334z m-751.36 0c-34.389333 0-62.293333 28.330667-62.293333 63.317334v247.253333c0 34.901333 27.904 63.317333 62.293333 63.317333 34.432 0 62.293333-28.288 62.293333-63.317333V384.170667c0-34.986667-27.861333-63.317333-62.293333-63.317334z m99.84 1.92v451.754667c0 26.794667 21.76 48.597333 48.554667 48.597333h55.466666v137.6c0 34.858667 27.946667 63.274667 62.293334 63.274667 34.432 0 62.293333-28.288 62.293333-63.274667V823.04h97.024v137.557333c0 34.901333 27.904 63.317333 62.293333 63.317334 34.389333 0 62.293333-28.330667 62.293334-63.317334V823.04h55.466666a48.64 48.64 0 0 0 48.64-48.64V322.816H236.117333z m407.210667-234.069333l51.2-74.282667c2.986667-4.437333 2.304-10.24-1.706667-13.013333-3.968-2.688-9.685333-1.408-12.672 2.986667l-53.205333 77.312A313.6 313.6 0 0 0 512 60.16c-40.96 0-80 7.68-114.986667 21.504L343.808 4.48c-2.986667-4.394667-8.704-5.76-12.672-2.986667-4.010667 2.730667-4.693333 8.533333-1.706667 13.013334l51.2 74.282666c-81.408 37.888-138.496 109.781333-145.792 193.792h554.325334c-7.253333-84.096-64.384-155.989333-145.792-193.877333zM395.093333 205.866667a30.72 30.72 0 1 1 0-61.397334 30.72 30.72 0 0 1 0 61.44z m237.696 0a30.72 30.72 0 1 1 0-61.397334 30.72 30.72 0 0 1 0 61.44z" fill="currentColor" opacity=".65"></path></svg>
+                    Android
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="tvos">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">tvOS</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M761.472 963.84H262.016c-113.408 0-205.312-91.904-205.312-205.312V259.072C56.704 145.664 148.608 53.76 262.016 53.76h499.456c113.408 0 205.312 91.904 205.312 205.312v499.456c0 113.408-91.904 205.312-205.312 205.312z" fill="#1E1E1E" class="dark:fill-white"></path><path d="M423.936 570.88c-0.256 0.768-5.504 17.792-18.048 36.352-10.88 15.744-22.272 31.744-40.064 32.128-17.664 0.256-23.296-10.496-43.264-10.496s-26.24 10.112-42.88 10.752c-17.152 0.768-30.336-17.152-41.472-33.024-14.976-21.632-27.52-55.04-27.52-87.04 0-16 3.2-31.616 10.88-45.056 11.52-19.84 32-32.384 54.272-32.768 17.024-0.256 33.024 11.52 43.264 11.52 10.368 0 29.696-13.696 50.176-11.776 8.448 0.384 32.384 3.84 47.744 26.24-1.152 0.768-28.544 2.176-28.16 50.816h-0.256c0.512 32.768 34.816 52.224 35.328 52.352z" fill="#8B8B8E" class="dark:fill-slate-400"></path><path d="M317.312 443.264c0-35.968 29.312-65.408 65.536-65.408 0 36.096-29.312 65.408-65.536 65.408z" fill="#8B8B8E" class="dark:fill-slate-400"></path><path d="M382.848 377.856c0 35.968-29.312 65.408-65.536 65.408 0-36.096 29.312-65.408 65.536-65.408zM608.384 633.728c-7.296 3.968-17.28 6.016-29.824 6.016-34.176 0-51.2-18.944-51.2-56.704v-110.08h-32.768v-27.904H527.36v-45.824l33.664-0.256v46.08h47.36v27.904h-47.36v104.064c0 12.544 2.176 21.504 6.4 26.88s11.264 8.064 21.248 8.064c7.552 0 14.208-2.176 19.84-6.4v28.16zM812.928 449.152l-75.52 190.592h-34.176l-71.68-190.592h36.864l46.592 136.064c3.84 10.88 6.016 20.096 6.656 27.392h0.896c1.152-9.6 3.2-18.56 6.016-26.752l48.768-136.832h35.584z" fill="#8B8B8E" class="dark:fill-slate-400"></path></svg>
+                    tvOS
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="android-tv">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Android TV</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M436.493306 270.110881c-12.362562 0-22.372543 9.852392-22.372543 22.023596 0 12.168134 10.009981 22.023596 22.372543 22.023596 12.365632 0 22.37459-9.855462 22.37459-22.023596C458.868919 279.963273 448.858938 270.110881 436.493306 270.110881zM559.995107 270.110881c-12.359492 0-22.372543 9.852392-22.372543 22.023596 0 12.168134 10.012028 22.023596 22.372543 22.023596 12.365632 0 22.37459-9.855462 22.37459-22.023596C582.369697 279.963273 572.360739 270.110881 559.995107 270.110881zM957.505563 753.09708 957.505563 104.711853 65.975621 104.711853l-0.00307 648.385227 351.209944 0 0 108.064204L255.085676 861.161285l-54.032614 54.032614 621.37199 0-54.032614-54.032614-167.502945-3.854794 5.406127-104.20941L957.505563 753.09708zM652.622738 368.117009c0-16.709567 13.902638-30.393217 30.877241-30.393217 16.974603 0 30.877241 13.68365 30.877241 30.393217l0 121.57287c0 16.709567-13.902638 30.393217-30.877241 30.393217-16.974603 0-30.877241-13.68365-30.877241-30.393217L652.622738 368.117009zM441.019389 228.29245l-19.537985-36.982286c-0.967024-1.842974-0.240477-4.154623 1.626034-5.135974 1.899256-0.950651 4.249791-0.23536 5.246491 1.632173l19.808138 37.487799c15.531741-5.878894 32.414247-9.142218 50.085722-9.142218 17.668405 0 34.55091 3.263323 50.082652 9.112542l19.811208-37.487799c0.991584-1.86958 3.344165-2.582825 5.243421-1.632173 1.86958 0.978281 2.596128 3.292999 1.629103 5.132904l-19.537985 36.982286c43.717687 19.475564 75.345012 60.58075 80.867796 109.496833L360.148523 337.756537C365.671307 288.87013 397.298632 247.759827 441.019389 228.29245zM343.868745 489.689878c0 16.709567-13.902638 30.393217-30.877241 30.393217s-30.877241-13.68365-30.877241-30.393217L282.114263 368.117009c0-16.709567 13.902638-30.393217 30.877241-30.393217s30.877241 13.68365 30.877241 30.393217L343.868745 489.689878zM590.874395 580.86953l-15.439644 0 0 60.786435c0 16.712637-13.899568 30.396287-30.874171 30.396287-16.97665 0-30.877241-13.68365-30.877241-30.396287l0-60.786435-30.877241 0 0 60.786435c0 16.712637-13.899568 30.396287-30.874171 30.396287-16.97665 0-30.877241-13.68365-30.877241-30.396287l0-60.786435-15.436574 0c-25.568329 0-46.313815-20.419052-46.313815-45.589314L359.304296 368.117009l277.882891 0 0 167.162184C637.18821 560.450479 616.440677 580.86953 590.874395 580.86953z" fill="currentColor"></path></svg>
+                    Android TV
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="linux">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">Linux</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg class="h-8 w-8" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M533.454557 0c-6.611245 0-13.435757 0.341226-20.43088 0.895717-180.295057 14.203514-132.480825 205.03391-135.21063 268.629825-3.284296 46.619943-12.795959 83.344344-44.828508 128.855303-37.748078 44.828508-90.723347 117.296287-115.846079 192.835096-11.857588 35.487459-17.48781 71.827981-12.241467 106.163803a18.084955 18.084955 0 0 0-4.734504 5.758182c-11.089831 11.431056-19.151285 25.63457-28.236416 35.786031-8.487986 8.487986-20.6868 11.388403-33.994596 17.061278-13.35045 5.800835-28.065803 11.47371-36.852361 29.046826-3.838788 8.018801-5.800835 16.762706-5.630222 25.63457 0 8.487986 1.151636 17.103931 2.345926 22.862113 2.473885 17.018625 4.947771 31.094179 1.663474 41.373599-10.577992 29.004173-11.900242 48.880562-4.478585 63.339995 7.421656 14.246167 22.81946 20.004349 40.05135 25.634571 34.591741 8.530639 81.467603 5.758181 118.362617 25.549264 39.496859 19.919042 79.590863 28.620294 111.58076 20.047002 22.435581-4.905117 41.3736-19.748429 51.52506-40.30727 25.037426-0.12796 52.46343-11.47371 96.396221-14.246167 29.814584-2.473885 67.13613 11.388403 109.959938 8.487986 1.06633 5.758181 2.687151 8.487986 4.862464 14.246167l0.12796 0.12796c16.677399 33.184186 47.473006 48.283417 80.35862 45.681572 32.885614-2.559192 67.903887-22.862113 96.268262-55.705073 26.914166-32.629694 71.785328-46.236064 101.429298-64.107753 14.843312-8.487986 26.82886-20.004349 27.681924-36.383176 0.981023-17.061278-8.487986-34.634395-30.454381-58.73345v-4.13736l-0.12796-0.127959c-7.251043-8.530639-10.663299-22.81946-14.41678-39.496859-3.625522-17.103931-7.762882-33.525412-20.985372-44.615242h-0.12796c-2.516539-2.303273-5.246343-2.857764-8.018801-5.758182a15.227191 15.227191 0 0 0-8.104107-2.729804c18.383527-54.510784 11.260444-108.765648-7.379002-157.560904-22.734153-60.141005-62.486931-112.519129-92.7707-148.561079-33.951944-42.866461-67.221436-83.472303-66.581638-143.698616 1.151636-91.789676 10.108807-261.592047-151.162925-261.847966z m22.563541 145.23413h0.554491c9.085131 0 16.890665 2.644498 24.909466 8.445333 8.14676 5.758181 14.075554 14.160861 18.724753 22.734153 4.478586 11.047178 6.739205 19.577817 7.08043 30.880913 0-0.853064 0.255919-1.706128 0.25592-2.516538v4.435932a3.668175 3.668175 0 0 1-0.170613-0.895717l-0.170613-1.023677a77.074324 77.074324 0 0 1-6.397979 30.113156 40.648495 40.648495 0 0 1-9.085131 14.288821 30.283769 30.283769 0 0 0-3.753481-1.791434c-4.478586-1.919394-8.487986-2.729805-12.156161-5.672875a55.960992 55.960992 0 0 0-9.34105-2.815111c2.090007-2.516539 6.184713-5.672875 7.762882-8.445333 2.260619-5.459609 3.497562-11.260444 3.753481-17.146584v-0.810411a51.610366 51.610366 0 0 0-2.601845-17.061278c-1.919394-5.758181-4.307973-8.573292-7.805534-14.246168-3.582868-2.815111-7.123084-5.630222-11.388404-5.630221h-0.682451c-3.966747 0-7.506962 1.279596-11.175137 5.630221a34.122556 34.122556 0 0 0-8.743905 14.246168 50.330771 50.330771 0 0 0-3.838788 17.061278v0.810411c0.085306 3.796134 0.341226 7.634922 0.853064 11.388403-8.232067-2.857764-18.6821-5.758181-25.890489-8.615946a69.737974 69.737974 0 0 1-0.767758-8.487986v-0.853064a75.581462 75.581462 0 0 1 6.39798-32.800307c3.497562-9.34105 9.895541-17.317197 18.340874-22.734153a42.013397 42.013397 0 0 1 25.335998-8.487986z m-126.338765 2.516539h1.535515c6.056754 0 11.516363 2.047353 17.018625 5.758181 6.227367 5.502262 11.260444 12.28412 14.672699 19.833736 3.838788 8.487986 6.014101 17.103931 6.525939 28.449681v0.170613c0.298572 5.715528 0.255919 8.573292-0.085306 11.34575v3.412256c-1.279596 0.298572-2.388579 0.767758-3.540216 1.023676-6.483286 2.345926-11.686976 5.758181-16.762705 8.530639 0.511838-3.796134 0.554492-7.634922 0.127959-11.388403v-0.639798c-0.511838-5.672875-1.663475-8.487986-3.497562-14.203514a26.146409 26.146409 0 0 0-7.08043-11.388403 10.577992 10.577992 0 0 0-7.805535-2.729804h-0.895717c-3.028377 0.255919-5.544915 1.748781-7.933494 5.630221a23.544564 23.544564 0 0 0-5.118384 11.516363 40.264616 40.264616 0 0 0-0.981023 14.118208v0.597145c0.511838 5.758181 1.578168 8.573292 3.454908 14.246167 1.919394 5.715528 4.13736 8.530639 7.037778 11.431056 0.469185 0.383879 0.895717 0.767758 1.450208 1.023677-2.985724 2.431232-4.990424 2.985724-7.506962 5.800834a13.009225 13.009225 0 0 1-5.587569 2.900418 111.794025 111.794025 0 0 1-11.729628-17.146585 75.581462 75.581462 0 0 1-6.611246-28.449681 75.026971 75.026971 0 0 1 3.412256-28.492335 60.994069 60.994069 0 0 1 12.070854-22.819459c5.459609-5.672875 11.089831-8.530639 17.829036-8.530639z m58.477531 72.766351c14.118208 0 31.222139 2.772458 51.823632 17.018625 12.497386 8.530639 22.307621 11.47371 44.913815 19.961695h0.127959c10.876565 5.800835 17.274544 11.34575 20.388228 17.018625v-5.587568a24.354975 24.354975 0 0 1 0.682451 20.047002c-5.246343 13.265144-22.009049 27.468658-45.383 35.956643v0.085307c-11.431056 5.758181-21.369251 14.203514-33.056226 19.833736-11.772282 5.758181-25.080079 12.454733-43.165034 11.388403a48.58199 48.58199 0 0 1-19.108632-2.857764 152.101295 152.101295 0 0 1-13.734328-8.445333c-8.317373-5.758181-15.48311-14.160861-26.103756-19.833736v-0.213266h-0.213266c-17.061278-10.492686-26.274368-21.838436-29.260092-30.326422-2.94307-11.431056-0.213266-20.004349 8.232067-25.591917 9.554316-5.758181 16.208214-11.559016 20.601493-14.331474 4.435932-3.156336 6.099407-4.350626 7.506962-5.587568h0.085307v-0.12796c7.20839-8.615945 18.596793-20.004349 35.786031-25.63457 5.928794-1.535515 12.540039-2.772458 19.876389-2.772458z m119.386294 91.405798c15.312497 60.439578 51.055875 148.219854 74.045947 190.787743 12.198814 22.776806 36.468482 70.761651 47.003821 128.983262 6.653898-0.213266 14.032901 0.767758 21.881089 2.729805 27.553964-71.273489-23.288645-147.878628-46.449329-169.162573-9.426356-8.573292-9.895541-14.28882-5.246343-14.28882 25.122732 22.776806 58.221612 67.050823 70.207159 117.594859 5.502262 22.81946 6.781858 47.089128 0.895717 71.230836 2.857764 1.194289 5.758181 2.601845 8.743905 2.857765 44.018098 22.776806 60.268965 40.008697 52.463431 65.557961v-1.834088c-2.601845-0.12796-5.118383 0-7.720229 0h-0.639798c6.440633-19.919042-7.762882-35.188886-45.425653-52.207511-39.027674-17.061278-70.20716-14.331474-75.538809 19.833736-0.298572 1.834087-0.511838 2.815111-0.725104 5.758182-2.900417 0.981023-5.928794 2.260619-8.914518 2.729804-18.340874 11.431056-28.236415 28.534988-33.823984 50.629343-5.544915 22.734153-7.251043 49.307094-8.743905 79.718822v0.12796c-0.895717 14.246167-7.293696 35.743378-13.606369 57.624467-63.979793 45.724225-152.698439 65.600614-228.151942 14.246167a112.817702 112.817702 0 0 0-17.146585-22.734153 61.847133 61.847133 0 0 0-11.729629-14.246168c7.762882 0 14.41678-1.236943 19.833736-2.857764a26.231715 26.231715 0 0 0 13.393104-14.246167c4.606545-11.388403 0-29.729277-14.715353-49.605666-14.715352-19.919042-39.710125-42.439929-76.263913-64.87551-26.871513-17.018625-42.056051-37.10828-49.051175-59.543861-7.037777-22.776806-6.099407-46.278717-0.639798-70.164506 10.450033-45.638919 37.23624-89.998242 54.340171-117.850779 4.563892-2.772458 1.578168 5.758181-17.402503 41.544212-16.890665 32.03255-48.667296 106.505029-5.20369 164.385415a346.514559 346.514559 0 0 1 27.596617-122.67059c24.056402-54.510784 74.34452-149.456797 78.311267-224.697033 2.047353 1.535515 9.255743 5.758181 12.326773 8.615946 9.298397 5.672875 16.208214 14.203514 25.165386 19.833735 8.999824 8.573292 20.345574 14.28882 37.364199 14.288821 1.663475 0.12796 3.19899 0.255919 4.734504 0.255919 17.530463 0 31.094179-5.715528 42.482583-11.431056 12.369427-5.715528 22.222315-14.246167 31.563364-17.061279h0.213266c19.919042-5.758181 35.658071-17.146585 44.57259-29.857236z m93.239885 382.087324c1.578168 25.63457 14.630046 53.103228 37.620118 58.73345 25.080079 5.715528 61.164682-14.203514 76.391873-32.629695l8.999824-0.383878c13.435757-0.341226 24.610894 0.426532 36.127257 11.388403l0.127959 0.127959c8.871865 8.487986 13.009225 22.648847 16.6774 37.364199 3.625522 17.103931 6.568592 33.269492 17.445156 45.468307 20.729453 22.478234 27.511311 38.643795 27.127433 48.624642l0.127959-0.255919v0.767758l-0.127959-0.511839c-0.639798 11.175137-7.890841 16.890665-21.241292 25.378652-26.871513 17.103931-74.472479 30.369075-104.798901 66.965516-26.359675 31.435405-58.477531 48.58199-86.841905 50.799956-28.321722 2.260619-52.762003-8.530639-67.13613-38.302569l-0.213266-0.12796c-8.957171-17.103931-5.118383-43.719525 2.388579-72.0839 7.506962-28.492335 18.255568-57.368548 19.74843-80.955765 1.578168-30.454381 3.241643-56.942016 8.317373-77.372896 5.118383-19.833736 13.137184-33.994597 27.340698-41.970745l1.919394-0.93837z m-461.294308 2.090006h0.426532c2.260619 0 4.478586 0.213266 6.696551 0.597145 16.037601 2.345926 30.113156 14.203514 43.634219 32.075203l38.814408 70.974917 0.12796 0.12796c10.364726 22.734153 32.160509 45.383 50.714649 69.865934 18.511487 25.506611 32.84296 48.240764 31.094179 66.965516v0.25592c-2.431232 31.733977-20.430881 48.965868-47.984844 55.193234-27.511311 5.758181-64.832857 0.085306-102.154403-19.791082-41.288293-22.862113-90.339468-20.004349-121.860179-25.677224-15.739029-2.815111-26.061102-8.573292-30.838261-17.103931-4.734505-8.487986-4.819811-25.63457 5.246343-52.46343v-0.12796l0.085307-0.12796c4.990424-14.246167 1.279596-32.117856-1.151637-47.728925-2.345926-17.103931-3.540215-30.241116 1.834088-40.094004 6.824511-14.246167 16.890665-17.018625 29.388051-22.734153 12.582693-5.758181 27.340698-8.615945 39.070327-20.004349h0.085307v-0.127959c10.919218-11.431056 18.980672-25.63457 28.492334-35.743378 8.104107-8.573292 16.208214-14.331474 28.279069-14.331474z m305.354225-387.035094c-18.55414 8.573292-40.30727 22.81946-63.467954 22.819459-23.118032 0-41.3736-11.388403-54.553437-19.876389-6.611245-5.715528-11.942895-11.431056-15.952295-14.28882-6.995124-5.715528-6.14206-14.246167-3.156337-14.246168 4.649198 0.682451 5.502262 5.758181 8.487986 8.573293 4.094707 2.815111 9.170437 8.487986 15.397804 14.203514 12.41208 8.530639 29.004173 19.919042 49.733626 19.919042 20.6868 0 44.913815-11.388403 59.629167-19.876389 8.317373-5.758181 18.980672-14.246167 27.63927-19.919042 6.653898-5.843488 6.355326-11.431056 11.900242-11.431057 5.502262 0.682451 1.450209 5.715528-6.27002 14.203514a345.405576 345.405576 0 0 1-29.430705 19.961696v-0.042653z m-46.150757-67.562662V240.564022c-0.255919-0.810411 0.554492-1.791434 1.236943-2.13266 3.156336-1.834087 7.677575-1.151636 11.089831 0.170613 2.687151 0 6.824511 2.857764 6.397979 5.758181-0.255919 2.090007-3.625522 2.815111-5.758182 2.815111-2.345926 0-3.924094-1.834087-6.0141-2.900417-2.217966-0.767758-6.227367-0.341226-6.952471-2.772458z m-23.501911 0c-0.853064 2.473885-4.819811 2.090007-7.08043 2.815111-2.0047 1.06633-3.668175 2.900417-5.928794 2.900417-2.175313 0-5.587569-0.810411-5.843488-2.900417-0.383879-2.815111 3.753481-5.672875 6.397979-5.672875 3.454909-1.322249 7.848188-2.0047 11.047178-0.213266 0.810411 0.383879 1.535515 1.279596 1.279596 2.13266v0.895717h0.127959z" fill=""></path></svg>
+                    Linux
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
             <section id="plugins">
-                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-8 border-l-4 border-blue-500 pl-4 section-title">插件与集成 (Plugins & Integrations)</h3>
+                <h3 class="text-3xl font-bold mb-8 border-l-4 pl-4 section-title accent-border flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12.89,3L14.85,6.4L11.4,10.04L13.96,12.6L17.6,9L21,10.91V3M5.12,3H10.91L9,5.12L5.12,9L3,10.91V5.12M18.88,15L15,18.88L10.91,21L9,18.88L12.89,15M10.91,3L3,10.91L10.91,21L18.88,13.12L10.91,3Z" /></svg>
+                    插件与集成 (Plugins & Integrations)
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"></div>
             </section>
         </main>
 
         <!-- 页脚 -->
-        <footer class="text-center mt-20 pt-8 border-t border-slate-200 dark:border-slate-700/50 footer">
+        <footer class="text-center mt-20 pt-8 footer footer-border">
         </footer>
     </div>
 
@@ -274,15 +285,18 @@
             };
 
             return `
-                <article class="card bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden flex flex-col ring-1 ring-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                <article class="card rounded-2xl shadow-lg overflow-hidden flex flex-col ring-1 ring-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
                     <div class="p-6 flex-grow">
-                        <h4 class="text-xl font-bold text-slate-900 dark:text-white pr-2 mb-2">${client.name}</h4>
+                        <h4 class="text-xl font-bold pr-2 mb-2 section-title">${client.name}</h4>
                         <div class="mb-4">${serverBadge[client.server]}</div>
-                        <p class="text-slate-600 dark:text-slate-400 mt-2 text-sm">${client.desc}</p>
+                        <p class="text-secondary mt-2 text-sm">${client.desc}</p>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 flex justify-between items-center text-sm border-t border-slate-100 dark:border-slate-700/50">
-                        <span class="font-bold text-green-700 dark:text-green-400">${client.price}</span>
-                        <a href="${client.link}" target="_blank" class="px-3 py-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-md font-medium transition-colors duration-200">${client.linkText} &rarr;</a>
+                    <div class="card-footer p-4 flex justify-between items-center text-sm">
+                        <span class="font-bold price">${client.price}</span>
+                        <a href="${client.link}" target="_blank" class="link group px-3 py-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-md font-medium transition-colors duration-200 inline-flex items-center">
+                            ${client.linkText}
+                            <span class="ml-1 transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+                        </a>
                     </div>
                 </article>
             `;
@@ -313,11 +327,37 @@
                 localStorage.setItem('color-theme', theme);
             };
 
-            // 页面加载时，已经通过 <head> 中的脚本设置了初始主题
-            // 这里只需为按钮添加事件
             themeToggleButton.addEventListener('click', () => {
                 const isDarkMode = rootElement.classList.contains('dark');
                 applyTheme(isDarkMode ? 'light' : 'dark');
+            });
+
+            // --- 3. 导航栏激活状态 ---
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('#nav-links a');
+            const navLinksMap = new Map();
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href) {
+                    navLinksMap.set(href.substring(1), link);
+                }
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => link.classList.remove('nav-link-active'));
+                        const activeLink = navLinksMap.get(id);
+                        if (activeLink) {
+                            activeLink.classList.add('nav-link-active');
+                        }
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" }); // 当板块位于屏幕中央时触发
+
+            sections.forEach(section => {
+                observer.observe(section);
             });
         });
     </script>
