@@ -255,35 +255,40 @@
     <script>
         // 客户端数据 (已根据您的要求更新)
         const clients = [
-            { name: 'Infuse', platform: ['ios', 'macos', 'tvos'], desc: '<b>画质标杆</b>。集成顶级解码引擎，支持杜比视界。', server: 'multi', price: '订阅制: ¥88/年', link: 'https://firecore.com/infuse', linkText: '官方网站' },
-            { name: 'VidHub', platform: ['ios', 'macos', 'tvos', 'android', 'android-tv'], desc: '<b>聚合神器</b>。整合多服务器与网盘，处理速度快。', server: 'multi', price: '¥89 (iOS) / 安卓免费', link: 'https://zh.okaapps.com/product/1659622164#', linkText: '官方网站' },
-            { name: 'Fileball', platform: ['ios', 'macos', 'tvos'], desc: '<b>文件管理核心</b>。免费版功能已足够日常使用。', server: 'multi', price: '¥68', link: 'https://fileball.app', linkText: '官方网站' },
-            { name: 'SenPlayer', platform: ['ios', 'macos', 'tvos'], desc: '<b>纯播放器</b>。性能稳定，Bug少，更新频繁。', server: 'multi', price: '套装 ¥88 / 单平台 ¥48', link: 'https://apps.apple.com/cn/app/senplayer-%E6%99%BA%E8%83%BD%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8-8%E5%80%8D%E9%80%9F/id6443975850', linkText: 'App Store' },
-            { name: 'EplayerX', platform: ['ios', 'macos'], desc: '集成MPV播放核心，解码能力强。', server: 'multi', price: '¥22', link: 'https://testflight.apple.com/join/E8Uyfh6y', linkText: 'TestFlight' },
-            { name: 'Hills', platform: ['android', 'windows'], desc: '<b>多服聚合搜索</b>。弥补Windows平台短板。', server: 'multi', price: 'Pro版: 约¥50', link: 'https://play.google.com/store/apps/details?id=com.mountains.hills&hl=en-US&pli=1', linkText: 'Google Play' },
-            { name: 'Femor', platform: ['ios', 'macos', 'windows', 'android'], desc: 'HKA腐竹开发，支持WebDAV。', server: 'multi', price: '免费 (iOS需签名)', link: 'https://web.telegram.org/a/#-1002158582195', linkText: 'Telegram' },
-            { name: 'iemc', platform: ['ios'], desc: '老牌Emby/Jellyfin播放器。', server: 'multi', price: '¥18', link: 'https://apps.apple.com/hk/app/iemc/id1467462861', linkText: 'App Store' },
-            { name: 'yybx', platform: ['ios'], desc: 'iemc同开发者，功能更丰富。', server: 'multi', price: '¥88', link: 'https://apps.apple.com/us/app/yybx/id1519723194', linkText: 'App Store' },
+            { name: 'Cinemore', platform: ['ios', 'macos', 'tvos'], desc: '<b>苹果生态新贵</b>。UI精美，支持苹果全平台。目前支持本地协议，Emby支持即将加入。', server: 'emby', price: '¥258 (活动可免费)', link: 'https://apps.apple.com/us/app/cinemore/id6738950107', linkText: 'App Store' },
+            { name: 'Infuse', platform: ['ios', 'macos', 'tvos'], desc: '<b>画质标杆</b>。集成顶级解码引擎，支持杜比视界，影音发烧友首选。', server: 'multi', price: '订阅制: ¥88/年', link: 'https://firecore.com/infuse', linkText: '官方网站' },
+            { name: 'VidHub', platform: ['ios', 'macos', 'tvos', 'android', 'android-tv'], desc: '<b>聚合神器</b>。整合多服务器与网盘，刮削与播放体验流畅。', server: 'multi', price: '¥89 (iOS) / 安卓免费', link: 'https://zh.okaapps.com/product/1659622164#', linkText: '官方网站' },
+            { name: 'Fileball', platform: ['ios', 'macos', 'tvos'], desc: '<b>文件管理核心</b>。强大的文件管理器，集成了优秀的视频播放功能。', server: 'multi', price: '¥68', link: 'https://fileball.app', linkText: '官方网站' },
+            { name: 'SenPlayer', platform: ['ios', 'macos', 'tvos'], desc: '<b>纯播放器</b>。性能稳定，Bug少，更新频繁，专注播放体验。', server: 'multi', price: '套装 ¥88 / 单平台 ¥48', link: 'https://apps.apple.com/cn/app/senplayer-%E6%99%BA%E8%83%BD%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8-8%E5%80%8D%E9%80%9F/id6443975850', linkText: 'App Store' },
+            { name: 'EplayerX', platform: ['ios', 'macos'], desc: '集成MPV播放核心，解码能力强悍，界面简洁。', server: 'multi', price: '¥22', link: 'https://testflight.apple.com/join/E8Uyfh6y', linkText: 'TestFlight' },
+            { name: 'Hills', platform: ['android', 'windows'], desc: '<b>多服聚合搜索</b>。弥补Windows平台聚合客户端的短板。', server: 'multi', price: 'Pro版: 约¥50', link: 'https://play.google.com/store/apps/details?id=com.mountains.hills&hl=en-US&pli=1', linkText: 'Google Play' },
+            { name: 'Femor', platform: ['ios', 'macos', 'windows', 'android'], desc: 'HKA腐竹开发，支持WebDAV，跨平台同步。', server: 'multi', price: '免费 (iOS需签名)', link: 'https://web.telegram.org/a/#-1002158582195', linkText: 'Telegram' },
+            { name: 'iemc', platform: ['ios'], desc: '老牌Emby/Jellyfin播放器，功能稳定。', server: 'multi', price: '¥18', link: 'https://apps.apple.com/hk/app/iemc/id1467462861', linkText: 'App Store' },
+            { name: 'yybx', platform: ['ios'], desc: 'iemc同开发者，功能更丰富，支持画中画。', server: 'multi', price: '¥88', link: 'https://apps.apple.com/us/app/yybx/id1519723194', linkText: 'App Store' },
             { name: 'HamHub', platform: ['ios', 'macos'], desc: '中规中矩，原生Mac版需订阅且不完善。', server: 'multi', price: '¥68 (iOS) / Mac需订阅', link: 'https://www.hamhub.app/', linkText: '官方网站' },
             { name: 'Forward', platform: ['ios', 'tvos'], desc: 'UI精美，支持聚合搜索，但Bug较多，开发缓慢。', server: 'multi', price: '¥298', link: 'https://apps.apple.com/cn/app/forward-%E6%96%B0%E8%A7%86%E7%95%8C/id6503940939', linkText: 'App Store' },
             { name: 'Conflux', platform: ['ios'], desc: '中规中矩，功能尚可，但价格偏贵。', server: 'multi', price: '¥108', link: 'https://apps.apple.com/cn/app/conflux-video-player/id6450330892', linkText: 'App Store' },
             { name: 'Reflix', platform: ['ios'], desc: '需跳转第三方播放器，内置Trakt功能。', server: 'multi', price: '¥109', link: 'https://apps.apple.com/cn/app/reflix-%E6%99%BA%E8%83%BD%E8%81%9A%E5%90%88%E5%AE%A2%E6%88%B7%E7%AB%AF/id6621243955', linkText: 'App Store' },
             { name: 'BoxPlayer', platform: ['ios'], desc: '中规中矩，核心特点是支持Trakt数据同步。', server: 'multi', price: '¥48', link: 'https://xbyvideohub.com/', linkText: '官方网站' },
             { name: 'AGC', platform: ['ios'], desc: '架构特殊，通过外部小组件实现功能。', server: 'multi', price: '¥128', link: 'https://agcplayer.com/', linkText: '官方网站' },
-            { name: 'DS Cloud', platform: ['ios'], desc: '第三方群晖NAS App，集成了Emby播放功能。', server: 'emby', price: '¥68', link: 'https://apps.apple.com/cn/app/ds-cloud-%E9%AB%98%E6%B8%85%E5%BD%B1%E7%89%87-%E6%97%A0%E6%8D%9F%E9%9F%B3%E4%B9%90%E8%BD%BB%E6%9D%BE%E6%92%AD%E6%94%BE/id6476057278', linkText: 'App Store' },
+            { name: 'zFuse', platform: ['ios', 'macos'], desc: '<b>极致性价比</b>。一块钱买不了吃亏，买不了上当。', server: 'multi', price: '¥1', link: 'https://apps.apple.com/cn/app/zfuse-play-for-everything/id1065301132?mt=12', linkText: 'App Store' },
+            { name: 'Prismo', platform: ['ios'], desc: '支持HDR与杜比视界的新兴iOS播放器。现已支持Emby，未来计划支持阿里云盘及WebDAV。', server: 'emby', price: '免费 (TF已满)', link: '#', linkText: '暂无链接' },
+            { name: 'DS Cloud', platform: ['ios'], desc: '专为群晖NAS用户打造，集成文件管理与影音播放。现已同时支持Emby与Jellyfin。', server: 'multi', price: '¥68', link: 'https://apps.apple.com/cn/app/ds-cloud-%E9%AB%98%E6%B8%85%E5%BD%B1%E7%89%87-%E6%97%A0%E6%8D%9F%E9%9F%B3%E4%B9%90%E8%BD%BB%E6%9D%BE%E6%92%AD%E6%94%BE/id6476057278', linkText: 'App Store' },
             { name: '网易爆米花', platform: ['ios', 'macos', 'windows', 'android', 'tvos', 'android-tv'], desc: '大厂出品，功能完善。<br><span class="text-xs text-red-500">注意:包含数据收集，已被多数服务器屏蔽。</span>', server: 'emby', price: '目前免费', link: 'https://bmh.163.com/', linkText: '官方网站' },
-            { name: 'Lenna', platform: ['ios'], desc: '新兴客户端，只支持Emby，处于早期开发阶段。', server: 'emby', price: '目前免费 (TestFlight)', link: 'https://apps.apple.com/us/app/lenna-video-library-player/id6502967807?l=zh-Hans-CN', linkText: 'App Store' },
+            { name: 'Lenna', platform: ['ios'], desc: '新兴客户端，只支持Emby。作者承诺永久免费。', server: 'emby', price: '永久免费', link: 'https://apps.apple.com/us/app/lenna-video-library-player/id6502967807?l=zh-Hans-CN', linkText: 'App Store' },
             { name: 'Swiftfin', platform: ['ios', 'macos', 'tvos'], desc: '<b>Jellyfin官方原生客户端</b>。为苹果生态系统打造的现代播放器。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/jellyfin/Swiftfin', linkText: 'GitHub' },
             { name: 'Findroid', platform: ['android'], desc: '<b>安卓社区首选</b>。广受欢迎的第三方客户端，UI/UX流畅。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/jarnedemeulemeester/findroid', linkText: 'GitHub' },
+            { name: 'Ghosten-Player', platform: ['android', 'android-tv'], desc: '完全开源的安卓播放器，支持Emby/Jellyfin、自动刮削及IPTV。计划支持桌面平台。', server: 'multi', price: '免费 (开源)', link: 'https://github.com/GhostenEditor/Ghosten-Player', linkText: 'GitHub' },
             { name: 'Jellyfin Media Player', platform: ['macos', 'windows', 'linux'], desc: '<b>官方桌面播放器</b>。基于MPV核心，解码能力强大。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/downloads/clients/', linkText: '官方网站' },
             { name: 'Jellyfin for Android TV', platform: ['android-tv'], desc: '<b>官方电视客户端</b>。为大屏和遥控器操作优化。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/downloads/clients/', linkText: '官方网站' },
             { name: 'Jellyfin for Kodi', platform: ['plugins'], desc: '<b>Kodi集成插件</b>。将Jellyfin无缝整合进Kodi媒体中心。', server: 'jellyfin', price: '免费 (开源)', link: 'https://jellyfin.org/docs/general/clients/kodi', linkText: '官方文档' },
             { name: 'Yamby', platform: ['android'], desc: '<b>安卓性价比之王</b>。大部分功能已永久免费。', server: 'emby', price: '免费', link: 'https://t.me/yamby_release', linkText: 'Telegram' },
             { name: 'Emby小秘版', platform: ['android', 'windows'], desc: '社区维护，解锁官方播放限制。', server: 'emby', price: '免费', link: 'https://t.me/lilyemby/38', linkText: 'Telegram' },
             { name: 'tsukimi', platform: ['linux'], desc: '开源的Emby客户端，专为Linux打造。', server: 'emby', price: '免费 (开源)', link: 'https://github.com/tsukinaha/tsukimi', linkText: 'GitHub' },
+            { name: 'delfin', platform: ['linux'], desc: '为Linux打造的Jellyfin第三方客户端，在Arch Linux社区中较为热门。', server: 'jellyfin', price: '免费 (开源)', link: 'https://codeberg.org/avery42/delfin', linkText: 'Codeberg' },
             { name: 'AfuseKt', platform: ['android', 'android-tv'], desc: '<b>安卓网盘刮削</b>。支持Trakt，适配TV。', server: 'multi', price: '¥99 (手机+TV版)', link: 'https://github.com/AttemptD/AfuseKt-release', linkText: 'GitHub' },
             { name: '小幻影视', platform: ['windows'], desc: '新兴客户端，由前“哔哩”开发者打造。2025年9月5日前为早鸟价。', server: 'multi', price: '早鸟价 ¥27 (原价 ¥45)', link: 'https://apps.microsoft.com/detail/9nb0h051m4v4?hl=zh-CN&gl=CN', linkText: 'Microsoft Store' },
-            { name: 'Terminus Player', platform: ['windows', 'macos'], desc: '终点站开发，多年未更新但仍可使用。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/Terminus-Media/jellyfin-media-player/releases', linkText: 'GitHub' },
+            { name: 'Terminus Player', platform: ['windows', 'macos'], desc: '基于官方Jellyfin Media Player，为macOS和Windows提供原生体验。', server: 'jellyfin', price: '免费 (开源)', link: 'https://github.com/Terminus-Media/jellyfin-media-player/releases', linkText: 'GitHub' },
         ];
 
         // 动态创建客户端卡片
@@ -303,7 +308,7 @@
                     </div>
                     <div class="card-footer p-4 flex justify-between items-center text-sm">
                         <span class="font-bold price">${client.price}</span>
-                        <a href="${client.link}" target="_blank" class="link group px-3 py-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-md font-medium transition-colors duration-200 inline-flex items-center">
+                        <a href="${client.link}" ${client.link === '#' ? '' : 'target="_blank"'} class="link group px-3 py-1.5 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-md font-medium transition-colors duration-200 inline-flex items-center">
                             ${client.linkText}
                             <span class="ml-1 transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
                         </a>
@@ -407,3 +412,4 @@
     </script>
 </body>
 </html>
+
